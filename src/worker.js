@@ -1,4 +1,4 @@
-const TELEGRAM_CHAT_ID = '@motin_group';
+const TELEGRAM_CHAT_ID = '-5542654432';
 const MAX_FILES = 6;
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
@@ -30,35 +30,6 @@ async function telegramCall(token, method, body) {
     throw new Error(`Telegram ${method} failed: ${response.status}`);
   }
   return payload.result;
-}
-
-async function discoverTelegramChats(env) {
-  if (!env.TELEGRAM_BOT_TOKEN) {
-    return json({ ok: false, error: 'telegram_not_configured' }, 503);
-  }
-
-  try {
-    const updates = await telegramCall(
-      env.TELEGRAM_BOT_TOKEN,
-      'getUpdates',
-      JSON.stringify({ limit: 100, timeout: 0, allowed_updates: ['message', 'my_chat_member'] })
-    );
-
-    const chats = new Map();
-    for (const update of updates) {
-      const chat = update?.message?.chat || update?.my_chat_member?.chat;
-      if (!chat || !['group', 'supergroup'].includes(chat.type)) continue;
-      chats.set(String(chat.id), {
-        id: chat.id,
-        title: chat.title || '',
-        type: chat.type
-      });
-    }
-
-    return json({ ok: true, chats: [...chats.values()] });
-  } catch {
-    return json({ ok: false, error: 'telegram_discovery_failed' }, 502);
-  }
 }
 
 async function sendLead(request, env) {
@@ -160,13 +131,6 @@ export default {
 
     if (url.pathname === '/api/health') {
       return json({ ok: true, telegramConfigured: Boolean(env.TELEGRAM_BOT_TOKEN) });
-    }
-
-    if (url.pathname === '/api/telegram-chats') {
-      if (request.method !== 'GET') {
-        return json({ ok: false, error: 'method_not_allowed' }, 405);
-      }
-      return discoverTelegramChats(env);
     }
 
     if (url.pathname === '/api/lead') {
