@@ -108,7 +108,7 @@ async function sendLead(request, env) {
 
 class BodyInjector {
   element(element) {
-    element.append('<script src="/visual-refresh.js?v=6" defer></script><script src="/lead.js?v=2" defer></script>', { html: true });
+    element.append('<script src="/visual-refresh.js?v=8" defer></script><script src="/lead.js?v=2" defer></script>', { html: true });
   }
 }
 
