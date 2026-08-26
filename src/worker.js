@@ -44,7 +44,6 @@ async function sendLead(request, env) {
     return json({ ok: false, error: 'invalid_form' }, 400);
   }
 
-  // Honeypot field. Real users never fill it.
   if (clean(form.get('website'), 200)) {
     return json({ ok: true });
   }
@@ -99,12 +98,31 @@ async function sendLead(request, env) {
       await telegramCall(env.TELEGRAM_BOT_TOKEN, 'sendDocument', media);
       sentFiles += 1;
     } catch {
-      // The lead text is already safely delivered; one broken attachment
-      // should not make the client resubmit the whole lead.
+      // Текстовая заявка уже доставлена; ошибка одного вложения не должна
+      // заставлять клиента повторно отправлять всю форму.
     }
   }
 
   return json({ ok: true, sentFiles });
+}
+
+class BodyInjector {
+  element(element) {
+    element.append('<script src="/lead.js?v=1" defer></script>', { html: true });
+  }
+}
+
+async function serveAsset(request, env) {
+  const response = await env.ASSETS.fetch(request);
+  const contentType = response.headers.get('content-type') || '';
+
+  if (response.ok && contentType.includes('text/html')) {
+    return new HTMLRewriter()
+      .on('body', new BodyInjector())
+      .transform(response);
+  }
+
+  return response;
 }
 
 export default {
@@ -122,6 +140,6 @@ export default {
       return sendLead(request, env);
     }
 
-    return env.ASSETS.fetch(request);
+    return serveAsset(request, env);
   }
 };
