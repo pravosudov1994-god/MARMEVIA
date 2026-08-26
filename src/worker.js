@@ -112,12 +112,33 @@ class BodyInjector {
   }
 }
 
+class EstimateIntroRewriter {
+  element(element) {
+    element.setInnerContent('Пришлите несколько фотографий поверхности и кратко опишите задачу. Заявка отправится напрямую мастеру MARMEVIA — переходить в мессенджер не потребуется.');
+  }
+}
+
+class EstimateLinkRewriter {
+  constructor(label) {
+    this.label = label;
+  }
+
+  element(element) {
+    element.setInnerContent(this.label);
+    element.setAttribute('href', '#estimate');
+    element.removeAttribute('target');
+  }
+}
+
 async function serveAsset(request, env) {
   const response = await env.ASSETS.fetch(request);
   const contentType = response.headers.get('content-type') || '';
 
   if (response.ok && contentType.includes('text/html')) {
     return new HTMLRewriter()
+      .on('#estimate .estimate-grid > div > p:nth-of-type(2)', new EstimateIntroRewriter())
+      .on('#wa-footer', new EstimateLinkRewriter('Оценка по фото'))
+      .on('#wa-mobile', new EstimateLinkRewriter('Оценка'))
       .on('body', new BodyInjector())
       .transform(response);
   }
