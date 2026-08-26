@@ -108,7 +108,78 @@ async function sendLead(request, env) {
 
 class BodyInjector {
   element(element) {
-    element.append('<script src="/visual-refresh.js?v=9" defer></script><script src="/lead.js?v=2" defer></script>', { html: true });
+    element.append(`
+      <style id="marmevia-process-mobile-fix">
+        @media (max-width: 720px) {
+          #process .steps {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: 0 !important;
+            position: relative !important;
+          }
+          #process .steps article {
+            display: grid !important;
+            grid-template-columns: 48px minmax(0, 1fr) !important;
+            grid-template-areas:
+              "num title"
+              "num text" !important;
+            column-gap: 14px !important;
+            row-gap: 6px !important;
+            align-items: start !important;
+            min-height: 0 !important;
+            padding: 22px 0 !important;
+            border-left: 0 !important;
+            border-bottom: 1px solid rgba(116, 89, 53, .18) !important;
+          }
+          #process .steps article:last-child {
+            border-bottom: 0 !important;
+          }
+          #process .steps article > b {
+            grid-area: num !important;
+            position: static !important;
+            display: block !important;
+            margin: 2px 0 0 !important;
+            padding: 0 !important;
+            color: #b88742 !important;
+            font-family: var(--serif) !important;
+            font-size: 24px !important;
+            line-height: 1 !important;
+          }
+          #process .steps article > h3 {
+            grid-area: title !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 24px !important;
+            line-height: 1.08 !important;
+            overflow-wrap: normal !important;
+            word-break: normal !important;
+          }
+          #process .steps article > p {
+            grid-area: text !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            font-size: 13px !important;
+            line-height: 1.55 !important;
+            color: var(--muted) !important;
+            overflow-wrap: normal !important;
+            word-break: normal !important;
+          }
+        }
+        @media (max-width: 430px) {
+          #process .steps article {
+            grid-template-columns: 42px minmax(0, 1fr) !important;
+            column-gap: 12px !important;
+            padding: 20px 0 !important;
+          }
+          #process .steps article > h3 { font-size: 22px !important; }
+          #process .steps article > p { font-size: 12.5px !important; }
+        }
+      </style>
+      <script src="/visual-refresh.js?v=9" defer></script><script src="/lead.js?v=2" defer></script>
+    `, { html: true });
   }
 }
 
