@@ -1,3 +1,8 @@
+const polishStylesheet = document.createElement('link');
+polishStylesheet.rel = 'stylesheet';
+polishStylesheet.href = 'mobile-polish.css?v=2';
+document.head.appendChild(polishStylesheet);
+
 const PHONE = '79775684264';
 const waBase = `https://wa.me/${PHONE}`;
 
