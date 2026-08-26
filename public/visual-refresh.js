@@ -1,16 +1,16 @@
 (() => {
   const assets = {
-    hero: '/assets/photo-hero.svg?v=4',
-    expert: '/assets/photo-expert.svg?v=4',
-    master: '/assets/photo-master.svg?v=4',
-    stain: '/assets/photo-stain.svg?v=4',
-    rust: '/assets/photo-rust.svg?v=4',
-    dull: '/assets/photo-dull.svg?v=4',
-    scratch: '/assets/photo-scratch.svg?v=4',
-    chip: '/assets/photo-chip.svg?v=4',
-    crack: '/assets/photo-crack.svg?v=4',
-    pit: '/assets/photo-pit.svg?v=4',
-    chemical: '/assets/photo-chemical.svg?v=4'
+    hero: '/assets/photo-hero.svg?v=5',
+    expert: '/assets/photo-expert.svg?v=5',
+    master: '/assets/photo-master.svg?v=5',
+    stain: '/assets/photo-stain.svg?v=5',
+    rust: '/assets/photo-rust.svg?v=5',
+    dull: '/assets/photo-dull.svg?v=5',
+    scratch: '/assets/photo-scratch.svg?v=5',
+    chip: '/assets/photo-chip.svg?v=5',
+    crack: '/assets/photo-crack.svg?v=5',
+    pit: '/assets/photo-pit.svg?v=5',
+    chemical: '/assets/photo-chemical.svg?v=5'
   };
 
   const preload = () => {
@@ -63,6 +63,7 @@
       el.style.backgroundPosition = 'center';
       el.style.backgroundSize = 'cover';
       el.style.backgroundRepeat = 'no-repeat';
+      el.style.filter = 'none';
     });
 
     const expertImage = document.querySelector('.expert-grid > img');
@@ -114,6 +115,7 @@
         img.removeAttribute('loading');
         img.loading = 'eager';
         img.decoding = 'async';
+        img.style.filter = 'none';
         img.onerror = () => {
           img.onerror = null;
           img.src = '/assets/case-1.svg';
@@ -125,18 +127,18 @@
       const style = document.createElement('style');
       style.id = 'marmevia-visual-refresh';
       style.textContent = `
-        .problem-art{height:150px!important;background-repeat:no-repeat!important;transition:transform .35s ease,filter .35s ease;filter:saturate(.88) contrast(.98)}
+        .problem-art{height:150px!important;background-repeat:no-repeat!important;transition:transform .35s ease;filter:none!important}
         .problem-grid article{box-shadow:0 12px 34px rgba(74,54,28,.045);transition:transform .25s ease,box-shadow .25s ease}
         .problem-grid article:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(74,54,28,.08)}
-        .problem-grid article:hover .problem-art{filter:saturate(.98) contrast(1)}
-        .expert-grid>img,.master-grid>img{display:block!important;width:100%!important;filter:saturate(.82)!important;object-position:center;min-height:430px;background:#e9e1d6}
+        .problem-grid article:hover .problem-art{filter:none!important}
+        .expert-grid>img,.master-grid>img{display:block!important;width:100%!important;filter:none!important;object-position:center;min-height:430px;background:#e9e1d6}
         #work{overflow:hidden}
         #work .case-grid.visual-cases{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
         .visual-case{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:var(--paper);box-shadow:0 16px 42px rgba(74,54,28,.055)}
         .compare-media{position:relative;display:grid;grid-template-columns:1fr 1fr;height:255px;background:#e8e0d5}
         .compare-half{position:relative;overflow:hidden;background:#e8e0d5}
         .compare-half:first-child{border-right:1px solid rgba(255,255,255,.9)}
-        .compare-half img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;filter:saturate(.82);transform:scale(1.01);background:#e8e0d5}
+        .compare-half img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;filter:none!important;transform:none!important;background:#e8e0d5}
         .compare-half span{position:absolute;bottom:12px;left:12px;padding:5px 10px;border-radius:999px;background:rgba(34,32,30,.78);color:#fff;font-size:11px;font-weight:700;backdrop-filter:blur(8px)}
         .compare-half:nth-child(2) span{left:auto;right:12px;background:rgba(201,164,106,.92);color:#fff}
         .compare-media>i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#fff;color:var(--gold2);font-style:normal;border:1px solid var(--line);box-shadow:0 6px 20px rgba(60,45,28,.12);z-index:2}
@@ -165,9 +167,6 @@
     }
   };
 
-  // The script is injected at the end of <body>, so the DOM is already parsed.
-  // Run immediately instead of waiting for DOMContentLoaded: this avoids a
-  // WebKit/Safari lazy-image race where dynamically replaced images stay blank.
   if (document.body) run();
   else document.addEventListener('DOMContentLoaded', run, { once: true });
 })();
