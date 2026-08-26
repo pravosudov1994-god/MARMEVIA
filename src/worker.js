@@ -1,0 +1,127 @@
+const TELEGRAM_CHAT_ID = '@motin_group';
+const MAX_FILES = 6;
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff',
+      'referrer-policy': 'strict-origin-when-cross-origin'
+    }
+  });
+}
+
+function clean(value, max = 1500) {
+  return String(value ?? '').replace(/[\u0000-\u001F\u007F]/g, ' ').trim().slice(0, max);
+}
+
+async function telegramCall(token, method, body) {
+  const response = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
+    method: 'POST',
+    body,
+    headers: body instanceof FormData ? undefined : { 'content-type': 'application/json' }
+  });
+
+  const payload = await response.json().catch(() => null);
+  if (!response.ok || !payload?.ok) {
+    throw new Error(`Telegram ${method} failed: ${response.status}`);
+  }
+  return payload.result;
+}
+
+async function sendLead(request, env) {
+  if (!env.TELEGRAM_BOT_TOKEN) {
+    return json({ ok: false, error: 'telegram_not_configured' }, 503);
+  }
+
+  let form;
+  try {
+    form = await request.formData();
+  } catch {
+    return json({ ok: false, error: 'invalid_form' }, 400);
+  }
+
+  // Honeypot field. Real users never fill it.
+  if (clean(form.get('website'), 200)) {
+    return json({ ok: true });
+  }
+
+  const name = clean(form.get('name'), 120);
+  const phone = clean(form.get('phone'), 80);
+  const material = clean(form.get('material'), 120);
+  const message = clean(form.get('message'), 1800);
+  const calculation = clean(form.get('calculation'), 700);
+  const source = clean(form.get('source'), 300) || 'marmevia.ru';
+
+  if (!name || !phone) {
+    return json({ ok: false, error: 'name_and_phone_required' }, 400);
+  }
+
+  const text = [
+    '🔔 Новая заявка MARMEVIA',
+    '',
+    `Имя: ${name}`,
+    `Телефон: ${phone}`,
+    material ? `Материал: ${material}` : '',
+    message ? `Задача: ${message}` : '',
+    calculation ? `Расчёт: ${calculation}` : '',
+    `Источник: ${source}`
+  ].filter(Boolean).join('\n');
+
+  try {
+    await telegramCall(env.TELEGRAM_BOT_TOKEN, 'sendMessage', JSON.stringify({
+      chat_id: TELEGRAM_CHAT_ID,
+      text,
+      disable_web_page_preview: true
+    }));
+  } catch {
+    return json({ ok: false, error: 'telegram_send_failed' }, 502);
+  }
+
+  const files = form.getAll('photos')
+    .filter((item) => item instanceof File && item.size > 0)
+    .slice(0, MAX_FILES);
+
+  let sentFiles = 0;
+  for (let i = 0; i < files.length; i += 1) {
+    const file = files[i];
+    if (file.size > MAX_FILE_BYTES) continue;
+
+    const media = new FormData();
+    media.append('chat_id', TELEGRAM_CHAT_ID);
+    media.append('caption', `MARMEVIA · фото ${i + 1}/${files.length} · ${name}`);
+    media.append('document', file, file.name || `photo-${i + 1}`);
+
+    try {
+      await telegramCall(env.TELEGRAM_BOT_TOKEN, 'sendDocument', media);
+      sentFiles += 1;
+    } catch {
+      // The lead text is already safely delivered; one broken attachment
+      // should not make the client resubmit the whole lead.
+    }
+  }
+
+  return json({ ok: true, sentFiles });
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === '/api/health') {
+      return json({ ok: true, telegramConfigured: Boolean(env.TELEGRAM_BOT_TOKEN) });
+    }
+
+    if (url.pathname === '/api/lead') {
+      if (request.method !== 'POST') {
+        return json({ ok: false, error: 'method_not_allowed' }, 405);
+      }
+      return sendLead(request, env);
+    }
+
+    return env.ASSETS.fetch(request);
+  }
+};
