@@ -1,16 +1,16 @@
 (() => {
   const A = {
-    hero: '/assets/photo-hero.svg?v=6',
-    expert: '/assets/photo-expert.svg?v=6',
-    master: '/assets/photo-master.svg?v=6',
-    stain: '/assets/photo-stain.svg?v=6',
-    rust: '/assets/photo-rust.svg?v=6',
-    dull: '/assets/photo-dull.svg?v=6',
-    scratch: '/assets/photo-scratch.svg?v=6',
-    chip: '/assets/photo-chip.svg?v=6',
-    crack: '/assets/photo-crack.svg?v=6',
-    pit: '/assets/photo-pit.svg?v=6',
-    chemical: '/assets/photo-chemical.svg?v=6'
+    hero: '/assets/photo-hero.svg?v=8',
+    expert: '/assets/photo-expert.svg?v=8',
+    master: '/assets/photo-master.svg?v=8',
+    stain: '/assets/photo-stain.svg?v=8',
+    rust: '/assets/photo-rust.svg?v=8',
+    dull: '/assets/photo-dull.svg?v=8',
+    scratch: '/assets/photo-scratch.svg?v=8',
+    chip: '/assets/photo-chip.svg?v=8',
+    crack: '/assets/photo-crack.svg?v=8',
+    pit: '/assets/photo-pit.svg?v=8',
+    chemical: '/assets/photo-chemical.svg?v=8'
   };
 
   const warmUp = () => Object.values(A).forEach((src) => {
