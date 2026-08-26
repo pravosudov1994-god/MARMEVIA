@@ -1,6 +1,6 @@
 (() => {
   const A = {
-    hero: '/assets/photo-hero.svg?v=8',
+    hero: '/assets/mv-hero.jpg?v=1',
     expert: '/assets/photo-expert.svg?v=8',
     master: '/assets/photo-master.svg?v=8',
     stain: '/assets/photo-stain.svg?v=8',
@@ -9,9 +9,11 @@
     scratch: '/assets/photo-scratch.svg?v=8',
     chip: '/assets/photo-chip.svg?v=8',
     crack: '/assets/photo-crack.svg?v=8',
-    pit: '/assets/photo-pit.svg?v=8',
+    pit: '/assets/mv-pit.jpg?v=1',
     chemical: '/assets/photo-chemical.svg?v=8'
   };
+
+  const FALLBACK = '/assets/case-1.svg';
 
   const warmUp = () => Object.values(A).forEach((src) => {
     const im = new Image();
@@ -42,6 +44,7 @@
       hero.style.backgroundPosition = 'center';
       hero.style.backgroundSize = 'cover';
       hero.style.backgroundRepeat = 'no-repeat';
+      hero.style.backgroundColor = '#e9e1d6';
     }
 
     const problems = {
@@ -66,7 +69,8 @@
       img.loading = 'eager';
       img.decoding = 'async';
       img.onerror = () => {
-        img.remove();
+        img.onerror = null;
+        img.src = FALLBACK;
       };
       box.appendChild(img);
     });
@@ -120,7 +124,7 @@
         img.style.filter = 'none';
         img.onerror = () => {
           img.onerror = null;
-          img.src = '/assets/case-1.svg';
+          img.src = FALLBACK;
         };
       });
     }
@@ -129,8 +133,8 @@
       const style = document.createElement('style');
       style.id = 'marmevia-visual-refresh';
       style.textContent = `
-        .problem-art{height:150px!important;display:block!important;position:relative!important;overflow:hidden!important;filter:none!important}
-        .problem-art>img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;filter:none!important}
+        .problem-art{height:150px!important;display:block!important;position:relative!important;overflow:hidden!important;filter:none!important;background:#e9e1d6!important}
+        .problem-art>img{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;filter:none!important;background:#e9e1d6!important}
         .problem-grid article{box-shadow:0 12px 34px rgba(74,54,28,.045);transition:transform .25s ease,box-shadow .25s ease}
         .problem-grid article:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(74,54,28,.08)}
         .expert-grid>img,.master-grid>img{display:block!important;width:100%!important;filter:none!important;object-position:center;min-height:430px;background:#e9e1d6}
@@ -154,7 +158,7 @@
           .visual-case:last-child{grid-column:1/-1;max-width:560px;width:100%;margin-inline:auto}
         }
         @media(max-width:720px){
-          .hero{background:linear-gradient(180deg,rgba(30,27,23,.20),rgba(24,21,18,.72)),url('${A.hero}') center 48%/cover no-repeat!important}
+          .hero{background:linear-gradient(180deg,rgba(30,27,23,.18),rgba(24,21,18,.66)),url('${A.hero}') center 48%/cover no-repeat!important}
           .problem-art{height:118px!important}
           #work .case-grid.visual-cases{display:flex!important;gap:14px!important;overflow-x:auto!important;scroll-snap-type:x mandatory;padding:0 14px 12px;margin-inline:-14px;grid-template-columns:none!important}
           #work .visual-case{flex:0 0 88%;min-width:0;scroll-snap-align:center}
