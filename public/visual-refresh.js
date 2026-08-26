@@ -61,7 +61,7 @@
         <article class="visual-case">
           <div class="compare-media">
             <div class="compare-half"><img src="/assets/photo-chip.svg" alt="Демонстрационный скол на мраморной кромке" loading="lazy"><span>До</span></div>
-            <div class="compare-half"><img src="/assets/photo-master.svg" alt="Демонстрационная обработка мраморной столешницы" loading="lazy"><span>После</span></div>
+            <div class="compare-half"><img src="/assets/photo-dull.svg" alt="Демонстрационная ровная мраморная поверхность после восстановления" loading="lazy"><span>После</span></div>
             <i aria-hidden="true">↔</i>
           </div>
           <div class="visual-case-copy"><h3>Локальное восстановление</h3><p>Ремонт повреждённого участка с последующей обработкой и выравниванием внешнего вида.</p></div>
