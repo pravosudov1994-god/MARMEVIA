@@ -1,8 +1,8 @@
 (() => {
   const A = {
-    hero: '/assets/mv12-hero.jpg?v=1',
-    expert: '/assets/mv12-expert.jpg?v=1',
-    master: '/assets/mv12-master.jpg?v=1',
+    hero: '/assets/mv12-hero.jpg?v=2',
+    expert: '/assets/mv12-expert.jpg?v=2',
+    master: '/assets/mv12-master.jpg?v=2',
     clean: '/assets/mv12-clean.jpg?v=1',
     stain: '/assets/mv12-stain.jpg?v=1',
     rust: '/assets/mv12-rust.jpg?v=1',
