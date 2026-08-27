@@ -1,8 +1,8 @@
 (() => {
   const A = {
-    hero: '/assets/mv-hero.jpg?v=1',
-    expert: '/assets/photo-expert.svg?v=8',
-    master: '/assets/photo-master.svg?v=8',
+    hero: '/assets/mv12-hero.jpg?v=1',
+    expert: '/assets/mv12-expert.jpg?v=1',
+    master: '/assets/mv12-master.jpg?v=1',
     stain: '/assets/photo-stain.svg?v=8',
     rust: '/assets/photo-rust.svg?v=8',
     dull: '/assets/photo-dull.svg?v=8',
@@ -77,7 +77,7 @@
 
     setImg(
       document.querySelector('.expert-grid > img'),
-      A.hero,
+      A.expert,
       '/assets/stair.svg',
       'Демонстрационный светлый интерьер с мраморной отделкой'
     );
