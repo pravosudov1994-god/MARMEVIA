@@ -3,25 +3,20 @@
     hero: '/assets/mv12-hero.jpg?v=1',
     expert: '/assets/mv12-expert.jpg?v=1',
     master: '/assets/mv12-master.jpg?v=1',
+    clean: '/assets/mv12-clean.jpg?v=1',
     stain: '/assets/mv12-stain.jpg?v=1',
     rust: '/assets/mv12-rust.jpg?v=1',
     dull: '/assets/mv12-dull.jpg?v=1',
     scratch: '/assets/mv12-scratch.jpg?v=1',
-    chip: '/assets/photo-chip.svg?v=8',
-    crack: '/assets/photo-crack.svg?v=8',
-    pit: '/assets/mv-pit.jpg?v=1',
-    chemical: '/assets/photo-chemical.svg?v=8'
+    chip: '/assets/mv12-chip.jpg?v=1',
+    crack: '/assets/mv12-crack.jpg?v=1',
+    pit: '/assets/mv12-pit.jpg?v=1',
+    chemical: '/assets/mv12-chemical.jpg?v=1'
   };
 
-  const FALLBACK = '/assets/case-1.svg';
+  const FALLBACK = A.clean;
 
-  const warmUp = () => Object.values(A).forEach((src) => {
-    const im = new Image();
-    im.decoding = 'async';
-    im.src = src;
-  });
-
-  function setImg(img, src, fallback, alt) {
+  function setImg(img, src, alt) {
     if (!img) return;
     img.removeAttribute('loading');
     img.loading = 'eager';
@@ -30,13 +25,17 @@
     img.style.filter = 'none';
     img.onerror = () => {
       img.onerror = null;
-      img.src = fallback;
+      img.src = FALLBACK;
     };
     img.src = src;
   }
 
   function run() {
-    warmUp();
+    [A.hero, A.expert, A.master].forEach((src) => {
+      const preload = new Image();
+      preload.decoding = 'async';
+      preload.src = src;
+    });
 
     const hero = document.querySelector('.hero-image');
     if (hero) {
@@ -64,28 +63,19 @@
       box.style.backgroundImage = '';
       box.innerHTML = '';
       const img = document.createElement('img');
-      img.src = src;
-      img.alt = alt;
-      img.loading = 'eager';
-      img.decoding = 'async';
-      img.onerror = () => {
-        img.onerror = null;
-        img.src = FALLBACK;
-      };
+      setImg(img, src, alt);
       box.appendChild(img);
     });
 
     setImg(
       document.querySelector('.expert-grid > img'),
       A.expert,
-      '/assets/stair.svg',
       'Демонстрационный светлый интерьер с мраморной отделкой'
     );
 
     setImg(
       document.querySelector('.master-grid > img'),
       A.master,
-      '/assets/master.svg',
       'Демонстрационное изображение мастера при работе с мраморной поверхностью'
     );
 
@@ -96,7 +86,7 @@
         <article class="visual-case">
           <div class="compare-media">
             <div class="compare-half"><img src="${A.dull}" alt="Демонстрационный вид потускневшего мрамора"><span>До</span></div>
-            <div class="compare-half"><img src="${A.hero}" alt="Демонстрационный вид восстановленного мраморного пола"><span>После</span></div>
+            <div class="compare-half"><img src="${A.clean}" alt="Демонстрационный вид чистой отполированной мраморной поверхности"><span>После</span></div>
             <i aria-hidden="true">↔</i>
           </div>
           <div class="visual-case-copy"><h3>Восстановление блеска</h3><p>Демонстрация типовой задачи: от матовой поверхности к более ровному и выразительному виду.</p></div>
@@ -104,18 +94,18 @@
         <article class="visual-case">
           <div class="compare-media">
             <div class="compare-half"><img src="${A.rust}" alt="Демонстрационный след ржавчины на мраморе"><span>До</span></div>
-            <div class="compare-half"><img src="${A.dull}" alt="Демонстрационная чистая мраморная поверхность"><span>После</span></div>
+            <div class="compare-half"><img src="${A.clean}" alt="Демонстрационная чистая мраморная поверхность"><span>После</span></div>
             <i aria-hidden="true">↔</i>
           </div>
-          <div class="visual-case-copy"><h3>Удаление ржавчины</h3><p>Пример визуального результата после локальной восстановительной обработки поверхности.</p></div>
+          <div class="visual-case-copy"><h3>Удаление ржавчины</h3><p>Демонстрация типовой локальной обработки после диагностики происхождения загрязнения.</p></div>
         </article>
         <article class="visual-case">
           <div class="compare-media">
             <div class="compare-half"><img src="${A.chip}" alt="Демонстрационный скол на мраморной кромке"><span>До</span></div>
-            <div class="compare-half"><img src="${A.expert}" alt="Демонстрационная обработанная мраморная поверхность"><span>После</span></div>
+            <div class="compare-half"><img src="${A.clean}" alt="Демонстрационная восстановленная мраморная поверхность"><span>После</span></div>
             <i aria-hidden="true">↔</i>
           </div>
-          <div class="visual-case-copy"><h3>Локальное восстановление</h3><p>Ремонт повреждённого участка с последующей обработкой и выравниванием внешнего вида.</p></div>
+          <div class="visual-case-copy"><h3>Локальное восстановление</h3><p>Демонстрация ремонта повреждённого участка с последующей обработкой поверхности.</p></div>
         </article>`;
 
       caseGrid.querySelectorAll('img').forEach((img) => {
@@ -152,7 +142,7 @@
         .visual-case-copy h3{font-family:var(--serif);font-size:26px;line-height:1.08;margin:0 0 8px}
         .visual-case-copy p{font-size:13px;line-height:1.55;color:var(--muted);margin:0}
         .estimate{position:relative;isolation:isolate}
-        .estimate:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(250,247,242,.96),rgba(250,247,242,.88)),url('${A.dull}') center/cover no-repeat;opacity:.58}
+        .estimate:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(250,247,242,.96),rgba(250,247,242,.88)),url('${A.clean}') center/cover no-repeat;opacity:.58}
         @media(max-width:1020px){
           #work .case-grid.visual-cases{grid-template-columns:1fr 1fr}
           .visual-case:last-child{grid-column:1/-1;max-width:560px;width:100%;margin-inline:auto}
