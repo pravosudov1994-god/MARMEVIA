@@ -1,6 +1,6 @@
 (() => {
   const A = {
-    hero: '/assets/mv12-hero.jpg?v=2',
+    hero: '/assets/mv12-hero-safe.jpg?v=1',
     expert: '/assets/mv12-expert.jpg?v=2',
     master: '/assets/mv12-master.jpg?v=2',
     clean: '/assets/mv12-clean.jpg?v=1',
