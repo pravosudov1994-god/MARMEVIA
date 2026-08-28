@@ -1,0 +1,41 @@
+name: Build clean hero
+
+on:
+  push:
+    branches: [rebuild-clean-v1]
+    paths:
+      - '.hero-upload-v20/**'
+      - '.github/workflows/build-clean-hero.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-clean-v1
+
+      - name: Build direct image
+        run: |
+          cat .hero-upload-v20/part*.b64 | tr -d '\n\r ' | base64 -d > public/assets/hero.webp
+          test "$(wc -c < public/assets/hero.webp)" -eq 30458
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p = Path('public/assets/hero.webp')
+          assert hashlib.sha1(p.read_bytes()).hexdigest() == 'a7186711e086a58ec8f675d37875b63937eb2a8c'
+          print('hero verified', p.stat().st_size)
+          PY
+          rm -rf .hero-upload-v20 .hero-build-v17 .hero-build-v18
+
+      - name: Commit built asset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Build direct Hero image asset" || exit 0
+          git push origin HEAD:rebuild-clean-v1
