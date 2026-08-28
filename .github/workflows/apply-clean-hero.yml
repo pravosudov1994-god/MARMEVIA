@@ -1,0 +1,61 @@
+name: Apply clean Hero frontend
+
+on:
+  push:
+    branches: [rebuild-clean-v1]
+    paths:
+      - '.github/workflows/apply-clean-hero.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  clean:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: rebuild-clean-v1
+
+      - name: Switch Hero to one direct asset
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          css = Path('public/styles.css')
+          s = css.read_text()
+          s = s.replace("url('assets/hero.svg')", "url('/assets/hero.webp')")
+          s = s.replace('url("assets/hero.svg")', "url('/assets/hero.webp')")
+          css.write_text(s)
+
+          worker = Path('src/worker.js')
+          w = worker.read_text()
+          w = w.replace('<script src="/visual-refresh.js?v=16" defer></script><script src="/lead.js?v=2" defer></script>', '<script src="/lead.js?v=3" defer></script>')
+          w = w.replace('<script src="/visual-refresh.js?v=15" defer></script><script src="/lead.js?v=2" defer></script>', '<script src="/lead.js?v=3" defer></script>')
+          worker.write_text(w)
+          PY
+
+          rm -f public/visual-refresh.js
+          rm -f public/assets/hero15-*.b64
+          rm -f public/assets/hero.jpg
+          rm -f public/assets/hero.svg
+          rm -f public/assets/DO_NOT_USE.txt public/assets/_rollback_marker.txt
+          rm -f .github/workflows/build-clean-hero.yml
+          rm -rf .hero-build-v17 .hero-build-v18 .hero-upload-v20
+
+      - name: Verify direct Hero
+        run: |
+          test -f public/assets/hero.webp
+          test "$(wc -c < public/assets/hero.webp)" -eq 30458
+          ! grep -q 'visual-refresh.js' src/worker.js
+          ! grep -q 'hero.svg' public/styles.css
+          ! grep -q 'hero15-' public/styles.css
+
+      - name: Commit clean Hero frontend
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Rebuild Hero with one direct image asset" || exit 0
+          git push origin HEAD:rebuild-clean-v1
