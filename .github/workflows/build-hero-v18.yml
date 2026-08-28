@@ -49,4 +49,4 @@ jobs:
           git commit -m 'Build clean binary Hero asset'
           git push origin HEAD:rebuild-clean-v1
 
-# trigger after all 10 chunks are present
+# final trigger: all ten chunks are now present
