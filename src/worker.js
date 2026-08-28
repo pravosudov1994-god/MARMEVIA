@@ -178,7 +178,7 @@ class BodyInjector {
           #process .steps article > p { font-size: 12.5px !important; }
         }
       </style>
-      <script src="/visual-refresh.js?v=16" defer></script><script src="/lead.js?v=2" defer></script>
+      <script src="/lead.js?v=3" defer></script>
     `, { html: true });
   }
 }
