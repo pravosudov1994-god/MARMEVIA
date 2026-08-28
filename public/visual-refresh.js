@@ -1,6 +1,6 @@
 (() => {
   const A = {
-    hero: '/assets/mv12-hero-safe.jpg?v=1',
+    hero: '/assets/hero.jpg?v=16',
     expert: '/assets/mv12-expert.jpg?v=2',
     master: '/assets/mv12-master.jpg?v=2',
     clean: '/assets/mv12-clean.jpg?v=1',
@@ -14,7 +14,6 @@
     chemical: '/assets/mv12-chemical.jpg?v=1'
   };
 
-  const HERO_PARTS = [1, 2, 3, 4, 5].map((n) => `/assets/hero15-${n}.b64?v=15`);
   const FALLBACK = A.clean;
 
   function applyHero(src) {
@@ -37,22 +36,6 @@
     }
   }
 
-  async function loadApprovedHero() {
-    try {
-      const parts = await Promise.all(HERO_PARTS.map(async (url) => {
-        const response = await fetch(url, { cache: 'force-cache' });
-        if (!response.ok) throw new Error('hero part');
-        return (await response.text()).trim();
-      }));
-      const src = `data:image/jpeg;base64,${parts.join('').replace(/\s+/g, '')}`;
-      const probe = new Image();
-      probe.onload = () => applyHero(src);
-      probe.src = src;
-    } catch (_) {
-      applyHero(A.hero);
-    }
-  }
-
   function setImg(img, src, alt) {
     if (!img) return;
     img.removeAttribute('loading');
@@ -68,14 +51,13 @@
   }
 
   function run() {
-    [A.expert, A.master].forEach((src) => {
+    [A.hero, A.expert, A.master].forEach((src) => {
       const preload = new Image();
       preload.decoding = 'async';
       preload.src = src;
     });
 
     applyHero(A.hero);
-    loadApprovedHero();
 
     const problems = {
       stain: [A.stain, 'Пятна на мраморной поверхности'],
