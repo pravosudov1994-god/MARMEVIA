@@ -14,7 +14,44 @@
     chemical: '/assets/mv12-chemical.jpg?v=1'
   };
 
+  const HERO_PARTS = [1, 2, 3, 4, 5].map((n) => `/assets/hero15-${n}.b64?v=15`);
   const FALLBACK = A.clean;
+
+  function applyHero(src) {
+    const heroImage = document.querySelector('.hero-image');
+    if (heroImage) {
+      heroImage.style.backgroundImage = `url("${src}")`;
+      heroImage.style.backgroundPosition = 'center';
+      heroImage.style.backgroundSize = 'cover';
+      heroImage.style.backgroundRepeat = 'no-repeat';
+      heroImage.style.backgroundColor = '#e9e1d6';
+    }
+
+    const heroSection = document.querySelector('.hero');
+    if (heroSection && window.matchMedia('(max-width:720px)').matches) {
+      heroSection.style.setProperty(
+        'background',
+        `linear-gradient(180deg,rgba(30,27,23,.18),rgba(24,21,18,.66)),url("${src}") center 48%/cover no-repeat`,
+        'important'
+      );
+    }
+  }
+
+  async function loadApprovedHero() {
+    try {
+      const parts = await Promise.all(HERO_PARTS.map(async (url) => {
+        const response = await fetch(url, { cache: 'force-cache' });
+        if (!response.ok) throw new Error('hero part');
+        return (await response.text()).trim();
+      }));
+      const src = `data:image/jpeg;base64,${parts.join('').replace(/\s+/g, '')}`;
+      const probe = new Image();
+      probe.onload = () => applyHero(src);
+      probe.src = src;
+    } catch (_) {
+      applyHero(A.hero);
+    }
+  }
 
   function setImg(img, src, alt) {
     if (!img) return;
@@ -31,20 +68,14 @@
   }
 
   function run() {
-    [A.hero, A.expert, A.master].forEach((src) => {
+    [A.expert, A.master].forEach((src) => {
       const preload = new Image();
       preload.decoding = 'async';
       preload.src = src;
     });
 
-    const hero = document.querySelector('.hero-image');
-    if (hero) {
-      hero.style.backgroundImage = `url('${A.hero}')`;
-      hero.style.backgroundPosition = 'center';
-      hero.style.backgroundSize = 'cover';
-      hero.style.backgroundRepeat = 'no-repeat';
-      hero.style.backgroundColor = '#e9e1d6';
-    }
+    applyHero(A.hero);
+    loadApprovedHero();
 
     const problems = {
       stain: [A.stain, 'Пятна на мраморной поверхности'],
